@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/common :: head('LeafLore - Home')}"></head>
+<body>
+
+<div th:replace="~{fragments/common :: navbar}"></div>
+
+<div class="container mt-4">
+    <div th:replace="~{fragments/common :: alerts}"></div>
+
+    <div class="hero-section text-center py-5 bg-light rounded mb-4">
+        <h1 class="display-4 fw-bold">Welcome to LeafLore</h1>
+        <p class="lead text-muted">Discover your next favorite book. Browse our curated collection across every genre.</p>
+        <div>
+            <a class="btn btn-primary btn-lg me-2" th:href="@{/books}">Browse Books</a>
+            <a class="btn btn-outline-primary btn-lg" sec:authorize="!isAuthenticated()" th:href="@{/register}">Get Started</a>
+        </div>
+    </div>
+
+    <div class="row mb-4 text-center">
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body py-4">
+                    <i class="bi bi-collection" style="font-size: 2rem; color: #0d6efd;"></i>
+                    <h5 class="mt-2">Product Catalog</h5>
+                    <p class="text-muted mb-0 small">Browse books by title, author, or category with detailed descriptions and pricing.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body py-4">
+                    <i class="bi bi-cart" style="font-size: 2rem; color: #0d6efd;"></i>
+                    <h5 class="mt-2">Shopping Cart</h5>
+                    <p class="text-muted mb-0 small">Add books to your cart, adjust quantities, and review your total before checkout.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body py-4">
+                    <i class="bi bi-credit-card" style="font-size: 2rem; color: #0d6efd;"></i>
+                    <h5 class="mt-2">Payment Simulation</h5>
+                    <p class="text-muted mb-0 small">Simulate payments via UPI, Credit Card, Debit Card, or Cash on Delivery.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="mb-4">Featured Books</h2>
+
+    <div class="row" th:unless="${#lists.isEmpty(books)}">
+        <div class="col-md-3 mb-4" th:each="book : ${books}">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title" th:text="${book.title}">Title</h5>
+                    <h6 class="card-subtitle mb-2 text-muted" th:text="${book.author}">Author</h6>
+                    <p class="card-text small text-muted" th:text="${book.category}">Category</p>
+                    <p class="card-text flex-grow-1" th:text="${#strings.abbreviate(book.description, 100)}">Description</p>
+                    <div class="d-flex justify-content-between align-items-center mt-auto">
+                        <span class="h5 mb-0 text-primary" th:text="|$${#numbers.formatDecimal(book.price, 1, 2)}|">$0.00</span>
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/books/{id}(id=${book.id})}">View</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center py-5" th:if="${#lists.isEmpty(books)}">
+        <i class="bi bi-book" style="font-size: 3rem;"></i>
+        <p class="text-muted mt-2">No books available yet. Check back soon!</p>
+    </div>
+</div>
+
+<div th:replace="~{fragments/common :: footer}"></div>
+<div th:replace="~{fragments/common :: scripts}"></div>
+
+</body>
+</html>

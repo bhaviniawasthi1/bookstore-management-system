@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: head('Register - LeafLore')}"></head>
+<body>
+
+<div th:replace="~{fragments/common :: navbar}"></div>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body p-4">
+                    <h3 class="text-center mb-4">Create Account</h3>
+
+                    <div th:replace="~{fragments/common :: alerts}"></div>
+
+                    <form th:action="@{/register}" th:object="${user}" method="post">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" th:field="*{name}" class="form-control" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" th:field="*{email}" class="form-control" required>
+                            <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" th:field="*{password}" class="form-control" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Confirm Password</label>
+                                <input type="password" th:field="*{confirmPassword}" class="form-control" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone (optional)</label>
+                            <input type="text" th:field="*{phone}" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Address (optional)</label>
+                            <textarea th:field="*{address}" class="form-control" rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Register</button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <p class="mb-0">Already have an account? <a th:href="@{/login}">Login here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/common :: footer}"></div>
+<div th:replace="~{fragments/common :: scripts}"></div>
+
+</body>
+</html>

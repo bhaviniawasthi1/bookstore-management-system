@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/common :: head('Manage Orders - LeafLore')}"></head>
+<body>
+
+<div th:replace="~{fragments/common :: navbar}"></div>
+
+<div class="container mt-4">
+    <div th:replace="~{fragments/common :: alerts}"></div>
+
+    <h2>Manage Orders</h2>
+
+    <div th:unless="${#lists.isEmpty(orders)}">
+        <div class="table-responsive mt-3">
+            <table class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td>#<span th:text="${order.id}">1</span></td>
+                        <td>
+                            <span th:text="${order.user.name}">Name</span>
+                            <br><small class="text-muted" th:text="${order.user.email}">Email</small>
+                        </td>
+                        <td th:text="${#temporals.format(order.orderDate, 'MMM dd, yyyy HH:mm')}">Date</td>
+                        <td th:text="${order.items.size()}">0</td>
+                        <td th:text="|$${#numbers.formatDecimal(order.totalAmount, 1, 2)}|">$0.00</td>
+                        <td>
+                            <span th:if="${order.payment != null}">
+                                <span class="badge" th:classappend="${order.payment.status.name() == 'SUCCESS' ? 'bg-success' : 'bg-danger'}"
+                                      th:text="${order.payment.status.name()}">Status</span>
+                                <br><small th:text="${order.payment.paymentMethod.name().replace('_', ' ')}">Method</small>
+                            </span>
+                            <span th:unless="${order.payment != null}" class="text-muted">N/A</span>
+                        </td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${order.status.name() == 'PENDING' ? 'bg-warning' : 
+                                                  order.status.name() == 'CONFIRMED' ? 'bg-info' :
+                                                  order.status.name() == 'SHIPPED' ? 'bg-primary' :
+                                                  order.status.name() == 'DELIVERED' ? 'bg-success' : 'bg-danger'}"
+                                  th:text="${order.status.name()}">Status</span>
+                        </td>
+                        <td>
+                            <form th:action="@{/admin/orders/update-status}" method="post" class="d-flex gap-1">
+                                <input type="hidden" name="orderId" th:value="${order.id}">
+                                <select name="status" class="form-select form-select-sm" style="width: auto;">
+                                    <option th:each="s : ${T(com.bookstore.entity.OrderStatus).values()}"
+                                            th:value="${s}" th:text="${s.name()}"
+                                            th:selected="${s == order.status}"></option>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="text-center py-5" th:if="${#lists.isEmpty(orders)}">
+        <p class="text-muted">No orders yet.</p>
+    </div>
+</div>
+
+<div th:replace="~{fragments/common :: footer}"></div>
+<div th:replace="~{fragments/common :: scripts}"></div>
+
+</body>
+</html>
