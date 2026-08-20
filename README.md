@@ -2,8 +2,7 @@
 
 A full-stack bookstore management application built with **Spring Boot**, **H2 (in-memory)**, and **Thymeleaf**. LeafLore manages books, carts, orders, and payments end to end with a clean, layered architecture and a custom Bootstrap-based frontend.
 
-**🔗 Live demo: [https://leaflore.onrender.com/](https://leaflore.onrender.com/)**
-*(Render assigns the exact subdomain when the service is created — update this link if yours differs. It may take a few seconds to wake up on first visit, since the free tier sleeps after periods of inactivity.)*
+**🔗 Live demo: [https://leaf-lore.onrender.com/](https://leaf-lore.onrender.com/)**
 
 > **This is a personal portfolio project — not a place to store real data.** There's no self-registration on purpose: the login page lists two shared demo accounts (one admin, one customer) that anyone can use, no sign-up needed. The database itself lives entirely in memory, so every time the app restarts — including Render's free-tier sleep/wake cycle — it comes back with a completely clean slate: the two demo accounts and the starter book catalog are reseeded automatically, and anything a visitor added (cart items, orders, edited books) is gone. Explore freely — nothing you do here sticks around, and nothing you do affects anyone else's session in a way that outlives a restart.
 
@@ -291,7 +290,7 @@ These are reseeded on every restart, local or deployed — they exist to make th
 
 ## Deployment (Render)
 
-This is a server-rendered Spring Boot application, so it needs a host that runs a long-lived JVM process — **it cannot be deployed to Vercel**, which only supports static sites and short-lived serverless functions (Node/Python/Go/Ruby). Render (or any Docker-friendly host such as Railway or Fly.io) is the right fit. This project is live on Render at **[https://leaflore.onrender.com/](https://leaflore.onrender.com/)**.
+This is a server-rendered Spring Boot application, so it needs a host that runs a long-lived JVM process — **it cannot be deployed to Vercel**, which only supports static sites and short-lived serverless functions (Node/Python/Go/Ruby). Render (or any Docker-friendly host such as Railway or Fly.io) is the right fit. This project is live on Render at **[https://leaf-lore.onrender.com/](https://leaf-lore.onrender.com/)**.
 
 The repo includes everything Render needs, and — since the database is in-memory — there's no separate database service to provision at all:
 
