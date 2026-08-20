@@ -25,10 +25,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/books", "/books/**", "/register", "/login", "/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/", "/books", "/books/**", "/login", "/css/**", "/js/**", "/images/**", "/h2-console/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
+            // Registration is intentionally disabled — this app runs on a fixed,
+            // freely-shared pool of demo accounts only (see DemoAccounts / login page).
             .formLogin(form -> form
                 .loginPage("/login")
                 .defaultSuccessUrl("/")
@@ -41,6 +43,10 @@ public class SecurityConfig {
                 .clearAuthentication(true)
                 .permitAll()
             )
+            // The H2 console (only reachable when H2_CONSOLE=true) renders in a
+            // frame and doesn't send CSRF tokens, so it needs both relaxed.
+            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
             .authenticationProvider(authenticationProvider());
 
         return http.build();

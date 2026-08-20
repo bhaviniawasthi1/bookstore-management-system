@@ -1,16 +1,18 @@
 package com.bookstore.controller;
 
-import com.bookstore.dto.UserRegistrationDto;
 import com.bookstore.service.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/**
+ * Registration is intentionally removed — this app runs on a small, fixed
+ * pool of shared demo accounts (see DemoAccounts) that visitors pick from
+ * the login page instead of creating their own. Both accounts can be used
+ * by multiple visitors at the same time; kept simple on purpose since this
+ * is just a portfolio demo.
+ */
 @Controller
 @RequiredArgsConstructor
 public class AuthController {
@@ -18,31 +20,8 @@ public class AuthController {
     private final UserService userService;
 
     @GetMapping("/login")
-    public String login() {
+    public String login(Model model) {
+        model.addAttribute("accounts", userService.getDemoAccounts());
         return "login";
-    }
-
-    @GetMapping("/register")
-    public String showRegistrationForm(Model model) {
-        model.addAttribute("user", new UserRegistrationDto());
-        return "register";
-    }
-
-    @PostMapping("/register")
-    public String registerUser(@Valid UserRegistrationDto registrationDto,
-                                BindingResult result,
-                                RedirectAttributes redirectAttributes) {
-        if (result.hasErrors()) {
-            return "register";
-        }
-
-        try {
-            userService.registerUser(registrationDto);
-            redirectAttributes.addFlashAttribute("success", "Registration successful! Please log in.");
-            return "redirect:/login";
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/register";
-        }
     }
 }

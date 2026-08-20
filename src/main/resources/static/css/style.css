@@ -1,64 +1,394 @@
+/* ==========================================================================
+   LeafLore — design system
+   Warm, bookish theme layered on top of Bootstrap 5 via CSS variable
+   overrides, so every page (including admin) picks it up automatically.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    /* brand palette */
+    --ll-brand: #1b6b4a;
+    --ll-brand-dark: #103f2b;
+    --ll-brand-light: #e6f2ea;
+    --ll-accent: #d99a3d;
+    --ll-accent-dark: #b8792a;
+    --ll-ink: #22281f;
+    --ll-muted: #6b7166;
+    --ll-bg: #faf8f3;
+    --ll-surface: #ffffff;
+    --ll-border: #e7e2d6;
+
+    /* remap Bootstrap's own variables so existing .btn-primary,
+       .bg-primary, .text-primary, .badge etc. inherit the new palette
+       without every template needing new classes */
+    --bs-primary: var(--ll-brand);
+    --bs-primary-rgb: 27, 107, 74;
+    --bs-link-color: var(--ll-brand);
+    --bs-link-color-rgb: 27, 107, 74;
+    --bs-link-hover-color: var(--ll-brand-dark);
+    --bs-body-font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --bs-body-color: var(--ll-ink);
+    --bs-body-bg: var(--ll-bg);
+    --bs-border-radius: 0.6rem;
+    --bs-border-radius-sm: 0.45rem;
+    --bs-border-radius-lg: 0.85rem;
+}
+
+/* ---------- base ---------- */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f8f9fa;
+    font-family: var(--bs-body-font-family);
+    background-color: var(--ll-bg);
+    color: var(--ll-ink);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    -webkit-font-smoothing: antialiased;
 }
 
-.container {
-    flex: 1;
+.container { flex: 1; }
+
+h1, h2, h3, h4, h5, .display-4 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 700;
+    color: var(--ll-ink);
 }
 
+a { text-decoration: none; }
+
+::selection {
+    background: var(--ll-accent);
+    color: #fff;
+}
+
+/* thin, calm scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--ll-bg); }
+::-webkit-scrollbar-thumb {
+    background: #d7d2c4;
+    border-radius: 8px;
+    border: 2px solid var(--ll-bg);
+}
+::-webkit-scrollbar-thumb:hover { background: #c3bda9; }
+
+/* ---------- navbar ---------- */
+.navbar.bg-primary {
+    background: linear-gradient(120deg, var(--ll-brand) 0%, var(--ll-brand-dark) 100%) !important;
+    box-shadow: 0 2px 16px rgba(16, 63, 43, 0.18);
+    padding-top: .65rem;
+    padding-bottom: .65rem;
+}
+
+.navbar-brand {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.4rem;
+    letter-spacing: .3px;
+}
+
+.navbar-brand i { color: var(--ll-accent); }
+
+.navbar .nav-link {
+    font-weight: 500;
+    opacity: .9;
+    border-radius: .5rem;
+    padding-left: .75rem !important;
+    padding-right: .75rem !important;
+    transition: background-color .15s ease, opacity .15s ease;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+.navbar .dropdown-menu {
+    border: none;
+    border-radius: .75rem;
+    box-shadow: 0 12px 30px rgba(16, 63, 43, 0.18);
+    overflow: hidden;
+    margin-top: .5rem;
+}
+
+.navbar .dropdown-item {
+    padding: .55rem 1.1rem;
+}
+
+.navbar .dropdown-item:active,
+.navbar .dropdown-item:hover {
+    background-color: var(--ll-brand-light);
+    color: var(--ll-brand-dark);
+}
+
+/* ---------- hero ---------- */
 .hero-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(120% 140% at 10% 0%, #2c8562 0%, var(--ll-brand) 45%, var(--ll-brand-dark) 100%);
+    color: #fff;
+    border-radius: 1.25rem;
+    padding: 4rem 1.5rem !important;
+}
+
+.hero-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(circle at 85% 20%, rgba(217, 154, 61, 0.35), transparent 45%),
+        radial-gradient(circle at 15% 90%, rgba(255, 255, 255, 0.08), transparent 40%);
+    pointer-events: none;
 }
 
 .hero-section h1, .hero-section .lead {
-    color: white;
+    color: #fff;
+    position: relative;
 }
 
+.hero-section .lead {
+    color: rgba(255, 255, 255, 0.88);
+    max-width: 620px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hero-section .btn-outline-primary {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.65);
+}
+
+.hero-section .btn-outline-primary:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: #fff;
+    color: #fff;
+}
+
+/* ---------- cards ---------- */
 .card {
-    transition: transform 0.2s, box-shadow 0.2s;
-    border: none;
+    border: 1px solid var(--ll-border);
+    border-radius: var(--bs-border-radius-lg);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    background-color: var(--ll-surface);
 }
 
 .card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(16, 63, 43, 0.1) !important;
 }
 
-.navbar {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+.card.shadow-sm { box-shadow: 0 2px 10px rgba(34, 40, 31, 0.06) !important; }
+.card.shadow { box-shadow: 0 8px 24px rgba(34, 40, 31, 0.08) !important; }
+
+/* feature tiles on the homepage */
+.feature-tile i { color: var(--ll-brand); }
+
+/* ---------- book cover / cards ---------- */
+.book-cover {
+    height: 150px;
+    border-radius: .75rem .75rem 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--ll-brand-light) 0%, #f3ead9 100%);
+    color: var(--ll-brand);
+    font-size: 2.4rem;
 }
 
-.badge {
-    font-weight: 500;
+.book-card .card-title {
+    font-family: 'Playfair Display', Georgia, serif;
 }
 
-.table th {
-    font-weight: 600;
+.book-price {
+    color: var(--ll-accent-dark);
+    font-weight: 700;
 }
 
+/* ---------- buttons ---------- */
 .btn {
-    border-radius: 5px;
+    border-radius: .6rem;
+    font-weight: 600;
+    letter-spacing: .1px;
+    transition: transform .12s ease, box-shadow .12s ease, background-color .15s ease;
 }
 
 .btn-primary {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
+    background-color: var(--ll-brand);
+    border-color: var(--ll-brand);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--ll-brand-dark);
+    border-color: var(--ll-brand-dark);
+    box-shadow: 0 6px 16px rgba(16, 63, 43, 0.25);
+}
+
+.btn-outline-primary {
+    color: var(--ll-brand);
+    border-color: var(--ll-brand);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--ll-brand);
+    border-color: var(--ll-brand);
+}
+
+.btn-lg {
+    padding: .7rem 1.6rem;
+}
+
+.btn:active { transform: translateY(1px); }
+
+/* ---------- badges ---------- */
+.badge {
+    font-weight: 600;
+    letter-spacing: .2px;
+    border-radius: .5rem;
+    padding: .42em .65em;
+}
+
+/* ---------- forms ---------- */
+.form-label {
+    font-weight: 600;
+    font-size: .92rem;
+    color: var(--ll-ink);
+}
+
+.form-control, .form-select {
+    border-color: var(--ll-border);
+    border-radius: .6rem;
+    padding: .55rem .85rem;
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+    border-color: var(--ll-brand);
+    box-shadow: 0 0 0 0.2rem rgba(27, 107, 74, 0.15);
 }
 
+/* ---------- auth (login / register) split layout ---------- */
+.auth-wrapper {
+    min-height: calc(100vh - 220px);
+    display: flex;
+    align-items: center;
+}
+
+.auth-card {
+    border: none;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 16px 40px rgba(34, 40, 31, 0.12) !important;
+}
+
+.auth-side {
+    background: radial-gradient(120% 140% at 20% 0%, #2c8562 0%, var(--ll-brand) 45%, var(--ll-brand-dark) 100%);
+    color: #fff;
+    padding: 3rem 2.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100%;
+}
+
+.auth-side i { color: var(--ll-accent); font-size: 2.5rem; }
+
+.auth-side h3 { color: #fff; font-family: 'Playfair Display', Georgia, serif; }
+
+.auth-form-side {
+    padding: 3rem 2.25rem;
+}
+
+/* ---------- tables ---------- */
+.table {
+    --bs-table-bg: transparent;
+}
+
+.table thead th {
+    font-weight: 700;
+    font-size: .82rem;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    color: var(--ll-muted);
+    border-bottom-width: 2px;
+}
+
+.table-responsive {
+    border-radius: .75rem;
+    overflow: hidden;
+    border: 1px solid var(--ll-border);
+}
+
+.table-responsive .table { margin-bottom: 0; }
+
+.table td, .table th { vertical-align: middle; }
+
+/* ---------- alerts ---------- */
 .alert {
-    border-radius: 8px;
+    border: none;
+    border-radius: .75rem;
+    border-left: 4px solid transparent;
 }
 
+.alert-success { border-left-color: var(--ll-brand); }
+.alert-danger { border-left-color: #c0392b; }
+.alert-info { border-left-color: #2f7fbd; }
+
+/* ---------- breadcrumbs ---------- */
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 1rem;
+}
+
+/* ---------- empty states ---------- */
+.empty-state i {
+    color: var(--ll-brand);
+    opacity: .55;
+}
+
+/* ---------- admin stat tiles ---------- */
+.stat-tile {
+    border: none;
+    border-radius: 1rem;
+    color: #fff;
+    background: linear-gradient(135deg, var(--ll-brand) 0%, var(--ll-brand-dark) 100%);
+}
+
+.stat-tile.stat-accent {
+    background: linear-gradient(135deg, var(--ll-accent) 0%, var(--ll-accent-dark) 100%);
+}
+
+.stat-tile.stat-neutral {
+    background: linear-gradient(135deg, #4a5a68 0%, #2c3742 100%);
+}
+
+.stat-tile .card-footer {
+    background: rgba(0, 0, 0, 0.12);
+    border: none;
+}
+
+/* ---------- footer ---------- */
 footer {
     margin-top: auto;
+    background-color: var(--ll-surface);
+}
+
+footer .brand-mark {
+    font-family: 'Playfair Display', Georgia, serif;
+    color: var(--ll-brand);
+    font-weight: 700;
+}
+
+/* ---------- misc utility ---------- */
+.fade-in {
+    animation: llFadeIn .35s ease both;
+}
+
+@keyframes llFadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 767.98px) {
+    .hero-section { padding: 2.75rem 1.25rem !important; }
+    .auth-side { display: none; }
 }

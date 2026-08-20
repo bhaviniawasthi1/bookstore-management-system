@@ -6,44 +6,44 @@
 
 <div th:replace="~{fragments/common :: navbar}"></div>
 
-<div class="container mt-4">
+<div class="container mt-4 fade-in">
     <div th:replace="~{fragments/common :: alerts}"></div>
 
     <h2>Admin Dashboard</h2>
 
     <div class="row mt-4">
         <div class="col-md-4 mb-4">
-            <div class="card bg-primary text-white shadow">
+            <div class="card stat-tile shadow">
                 <div class="card-body text-center py-4">
                     <i class="bi bi-book" style="font-size: 2.5rem;"></i>
-                    <h3 class="mt-2" th:text="${totalBooks}">0</h3>
+                    <h3 class="mt-2 text-white" th:text="${totalBooks}">0</h3>
                     <p class="mb-0">Total Books</p>
                 </div>
-                <div class="card-footer bg-primary border-0 text-center">
+                <div class="card-footer text-center">
                     <a class="btn btn-outline-light btn-sm" th:href="@{/admin/books}">Manage Books</a>
                 </div>
             </div>
         </div>
         <div class="col-md-4 mb-4">
-            <div class="card bg-success text-white shadow">
+            <div class="card stat-tile stat-accent shadow">
                 <div class="card-body text-center py-4">
                     <i class="bi bi-box-seam" style="font-size: 2.5rem;"></i>
-                    <h3 class="mt-2" th:text="${totalOrders}">0</h3>
+                    <h3 class="mt-2 text-white" th:text="${totalOrders}">0</h3>
                     <p class="mb-0">Total Orders</p>
                 </div>
-                <div class="card-footer bg-success border-0 text-center">
+                <div class="card-footer text-center">
                     <a class="btn btn-outline-light btn-sm" th:href="@{/admin/orders}">View Orders</a>
                 </div>
             </div>
         </div>
         <div class="col-md-4 mb-4">
-            <div class="card bg-info text-white shadow">
+            <div class="card stat-tile stat-neutral shadow">
                 <div class="card-body text-center py-4">
                     <i class="bi bi-people" style="font-size: 2.5rem;"></i>
-                    <h3 class="mt-2" th:text="${totalCustomers}">0</h3>
+                    <h3 class="mt-2 text-white" th:text="${totalCustomers}">0</h3>
                     <p class="mb-0">Total Customers</p>
                 </div>
-                <div class="card-footer bg-info border-0 text-center">
+                <div class="card-footer text-center">
                     <a class="btn btn-outline-light btn-sm" th:href="@{/admin/customers}">View Customers</a>
                 </div>
             </div>

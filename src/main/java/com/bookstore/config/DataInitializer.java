@@ -9,6 +9,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 
+/**
+ * Seeds the fixed demo-account roster and starter catalog on every startup.
+ * There is no open self-registration in this app (see DemoAccounts /
+ * AuthController) — visitors pick one of these accounts from the login page.
+ * Combined with the in-memory H2 database, every restart wipes everything
+ * and reseeds this exact same roster, so the live demo never accumulates
+ * real user data.
+ */
 @Component
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
@@ -22,35 +30,30 @@ public class DataInitializer implements CommandLineRunner {
     @Transactional
     public void run(String... args) {
         if (userRepository.count() == 0) {
-            createAdminUser();
+            createDemoAccounts();
         }
         if (bookRepository.count() == 0) {
             createSampleBooks();
         }
     }
 
-    private void createAdminUser() {
-        User admin = User.builder()
-                .name("Admin")
-                .email("admin@bookstore.com")
-                .password(passwordEncoder.encode("admin123"))
-                .role(Role.ADMIN)
-                .address("LeafLore HQ, Main Street")
-                .phone("1234567890")
-                .build();
-        userRepository.save(admin);
+    private void createDemoAccounts() {
+        for (DemoAccounts.Account account : DemoAccounts.ALL) {
+            User user = User.builder()
+                    .name(account.label())
+                    .email(account.email())
+                    .password(passwordEncoder.encode(account.password()))
+                    .role(account.role())
+                    .address(account.role() == Role.ADMIN ? "LeafLore HQ, Main Street" : "Demo Address, LeafLore Campus")
+                    .phone("1234567890")
+                    .build();
+            user = userRepository.save(user);
 
-        User customer = User.builder()
-                .name("John Doe")
-                .email("john@example.com")
-                .password(passwordEncoder.encode("password123"))
-                .role(Role.CUSTOMER)
-                .address("123 Reader's Lane, Booktown")
-                .phone("9876543210")
-                .build();
-        userRepository.save(customer);
-        Cart cart = Cart.builder().user(customer).build();
-        cartRepository.save(cart);
+            if (account.role() == Role.CUSTOMER) {
+                Cart cart = Cart.builder().user(user).build();
+                cartRepository.save(cart);
+            }
+        }
     }
 
     private void createSampleBooks() {

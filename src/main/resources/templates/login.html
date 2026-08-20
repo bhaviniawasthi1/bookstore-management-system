@@ -5,36 +5,69 @@
 
 <div th:replace="~{fragments/common :: navbar}"></div>
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow">
-                <div class="card-body p-4">
-                    <h3 class="text-center mb-4">Login</h3>
-
-                    <div th:replace="~{fragments/common :: alerts}"></div>
-
-                    <div th:if="${param.logout}" class="alert alert-info">
-                        You have been logged out successfully.
+<div class="container auth-wrapper fade-in py-4">
+    <div class="row justify-content-center w-100">
+        <div class="col-lg-9">
+            <div class="card auth-card">
+                <div class="row g-0">
+                    <div class="col-md-5 auth-side d-none d-md-flex">
+                        <i class="bi bi-info-circle mb-3"></i>
+                        <h3>Welcome</h3>
+                        <p style="color: rgba(255,255,255,.9);" class="mb-0">
+                            Pick one of the demo accounts to try the app. Custom accounts can't be created.
+                        </p>
                     </div>
+                    <div class="col-md-7">
+                        <div class="auth-form-side">
+                            <h3 class="mb-4">Login</h3>
 
-                    <form th:action="@{/login}" method="post">
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" name="username" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Password</label>
-                            <input type="password" name="password" class="form-control" required>
-                        </div>
-                        <div th:if="${param.error}" class="alert alert-danger">
-                            Invalid email or password.
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Login</button>
-                    </form>
+                            <div class="alert alert-info d-md-none">
+                                <i class="bi bi-info-circle me-2"></i>Pick one of the demo accounts below to try the app. Custom accounts can't be created.
+                            </div>
 
-                    <div class="text-center mt-3">
-                        <p class="mb-0">Don't have an account? <a th:href="@{/register}">Register here</a></p>
+                            <div th:replace="~{fragments/common :: alerts}"></div>
+
+                            <div th:if="${param.logout}" class="alert alert-info">
+                                <i class="bi bi-check-circle me-2"></i>You have been logged out successfully.
+                            </div>
+
+                            <form th:action="@{/login}" method="post" id="loginForm">
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" name="username" id="loginEmail" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Password</label>
+                                    <input type="password" name="password" id="loginPassword" class="form-control" required>
+                                </div>
+                                <div th:if="${param.error}" class="alert alert-danger">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>Invalid email or password.
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Login</button>
+                            </form>
+
+                            <hr class="my-4">
+
+                            <h6 class="text-muted mb-3">Demo accounts</h6>
+                            <div class="list-group">
+                                <div class="list-group-item d-flex justify-content-between align-items-center flex-wrap gap-2"
+                                     th:each="account : ${accounts}">
+                                    <div>
+                                        <div class="fw-semibold">
+                                            <span th:text="${account.label()}">Label</span>
+                                            <span class="badge bg-secondary ms-1" th:text="${account.role().name()}">ROLE</span>
+                                        </div>
+                                        <div class="small text-muted">
+                                            <span th:text="${account.email()}">email</span> &middot; <span th:text="${account.password()}">password</span>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary use-account-btn"
+                                            th:attr="data-email=${account.email()},data-password=${account.password()}">
+                                        Use this
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -44,6 +77,16 @@
 
 <div th:replace="~{fragments/common :: footer}"></div>
 <div th:replace="~{fragments/common :: scripts}"></div>
+
+<script>
+    document.querySelectorAll('.use-account-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.getElementById('loginEmail').value = btn.getAttribute('data-email');
+            document.getElementById('loginPassword').value = btn.getAttribute('data-password');
+            document.getElementById('loginForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+</script>
 
 </body>
 </html>

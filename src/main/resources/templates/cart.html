@@ -6,10 +6,10 @@
 
 <div th:replace="~{fragments/common :: navbar}"></div>
 
-<div class="container mt-4">
+<div class="container mt-4 fade-in">
     <div th:replace="~{fragments/common :: alerts}"></div>
 
-    <h2>Shopping Cart</h2>
+    <h2 class="mb-4">Shopping Cart</h2>
 
     <div th:unless="${#lists.isEmpty(items)}">
         <div class="table-responsive">
@@ -62,7 +62,7 @@
         </div>
     </div>
 
-    <div class="text-center py-5" th:if="${#lists.isEmpty(items)}">
+    <div class="text-center py-5 empty-state" th:if="${#lists.isEmpty(items)}">
         <i class="bi bi-cart" style="font-size: 4rem;"></i>
         <p class="text-muted mt-2">Your cart is empty.</p>
         <a th:href="@{/books}" class="btn btn-primary">Browse Books</a>

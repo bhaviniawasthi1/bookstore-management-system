@@ -1,51 +1,20 @@
 package com.bookstore.service;
 
-import com.bookstore.dto.UserRegistrationDto;
-import com.bookstore.entity.Cart;
-import com.bookstore.entity.Role;
+import com.bookstore.config.DemoAccounts;
 import com.bookstore.entity.User;
 import com.bookstore.exception.BadRequestException;
-import com.bookstore.repository.CartRepository;
 import com.bookstore.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-    private final CartRepository cartRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    @Transactional
-    public User registerUser(UserRegistrationDto registrationDto) {
-        if (userRepository.existsByEmail(registrationDto.getEmail())) {
-            throw new BadRequestException("Email already registered");
-        }
-
-        if (!registrationDto.getPassword().equals(registrationDto.getConfirmPassword())) {
-            throw new BadRequestException("Passwords do not match");
-        }
-
-        User user = User.builder()
-                .name(registrationDto.getName())
-                .email(registrationDto.getEmail())
-                .password(passwordEncoder.encode(registrationDto.getPassword()))
-                .role(Role.CUSTOMER)
-                .address(registrationDto.getAddress())
-                .phone(registrationDto.getPhone())
-                .build();
-
-        user = userRepository.save(user);
-
-        Cart cart = Cart.builder().user(user).build();
-        cartRepository.save(cart);
-
-        return user;
-    }
 
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
@@ -64,5 +33,10 @@ public class UserService {
         user.setAddress(address);
         user.setPhone(phone);
         return userRepository.save(user);
+    }
+
+    /** The demo accounts (admin + student), for display on the login page. No locking — shared freely. */
+    public List<DemoAccounts.Account> getDemoAccounts() {
+        return DemoAccounts.ALL;
     }
 }

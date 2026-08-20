@@ -1,6 +1,11 @@
 # <img src="https://img.icons8.com/?size=30&id=12458&format=png"/> LeafLore
 
-A complete web-based bookstore management application built with **Spring Boot**, **MySQL**, and **Thymeleaf**. LeafLore manages books, customers, orders, and payments with a clean, layered architecture and a responsive Bootstrap frontend.
+A full-stack bookstore management application built with **Spring Boot**, **H2 (in-memory)**, and **Thymeleaf**. LeafLore manages books, carts, orders, and payments end to end with a clean, layered architecture and a custom Bootstrap-based frontend.
+
+**🔗 Live demo: [https://leaflore.onrender.com/](https://leaflore.onrender.com/)**
+*(Render assigns the exact subdomain when the service is created — update this link if yours differs. It may take a few seconds to wake up on first visit, since the free tier sleeps after periods of inactivity.)*
+
+> **This is a personal portfolio project — not a place to store real data.** There's no self-registration on purpose: the login page lists two shared demo accounts (one admin, one customer) that anyone can use, no sign-up needed. The database itself lives entirely in memory, so every time the app restarts — including Render's free-tier sleep/wake cycle — it comes back with a completely clean slate: the two demo accounts and the starter book catalog are reseeded automatically, and anything a visitor added (cart items, orders, edited books) is gone. Explore freely — nothing you do here sticks around, and nothing you do affects anyone else's session in a way that outlives a restart.
 
 **Developed by Bhavini Awasthi**
 
@@ -17,7 +22,7 @@ A complete web-based bookstore management application built with **Spring Boot**
 - Add books to cart with quantity selection
 - Update item quantities or remove items
 - Real-time total amount calculation
-- Cart persistence per user
+- Cart persistence per user (for the life of the current in-memory database)
 
 ### Payment Simulation
 - Multiple payment methods: UPI, Credit Card, Debit Card, Cash on Delivery
@@ -26,9 +31,9 @@ A complete web-based bookstore management application built with **Spring Boot**
 - Order confirmation on successful payment
 
 ### Authentication & Authorization
-- User registration with BCrypt password encryption
+- Two shared demo accounts (Admin / Customer) — no self-registration
+- BCrypt password encryption
 - Login / Logout functionality
-- Two roles: **Admin** and **Customer**
 - Role-based access control on pages and actions
 
 ### Order Management
@@ -54,7 +59,7 @@ A complete web-based bookstore management application built with **Spring Boot**
 | Spring MVC        | 6           |
 | Spring Data JPA   | (Hibernate) |
 | Spring Security   | 6           |
-| MySQL             | 8.0+        |
+| H2 (in-memory)    | latest      |
 | Thymeleaf         | 3           |
 | Bootstrap         | 5.3         |
 | JavaScript        | (Vanilla)   |
@@ -67,6 +72,9 @@ A complete web-based bookstore management application built with **Spring Boot**
 
 ```
 bookstore-management-system/
+├── Dockerfile                                  # Multi-stage build for deployment
+├── render.yaml                                 # Render Blueprint (web service config)
+├── .gitignore
 ├── pom.xml
 └── src/
     └── main/
@@ -74,22 +82,22 @@ bookstore-management-system/
         │   └── com/bookstore/
         │       ├── BookstoreApplication.java          # Entry point
         │       ├── config/
-        │       │   ├── DataInitializer.java           # Seeds admin & sample data
-        │       │   └── SecurityConfig.java            # Spring Security config
+        │       │   ├── DataInitializer.java           # Seeds demo accounts & sample data
+        │       │   ├── DemoAccounts.java               # The fixed admin/student roster
+        │       │   └── SecurityConfig.java             # Spring Security config
         │       ├── controller/
         │       │   ├── AdminController.java            # Admin panel routes
-        │       │   ├── AuthController.java             # Login/Register routes
+        │       │   ├── AuthController.java             # Login route
         │       │   ├── BookController.java             # Book listing & detail
         │       │   ├── CartController.java             # Cart operations
         │       │   ├── CheckoutController.java         # Checkout & payment flow
         │       │   ├── HomeController.java             # Home page
-        │       │   ├── OrderController.java            # Order history & detail
+        │       │   ├── OrderController.java             # Order history & detail
         │       │   └── ProfileController.java          # User profile
         │       ├── dto/
         │       │   ├── BookDto.java
         │       │   ├── CartItemDto.java
-        │       │   ├── OrderDto.java
-        │       │   └── UserRegistrationDto.java
+        │       │   └── OrderDto.java
         │       ├── entity/
         │       │   ├── Book.java
         │       │   ├── Cart.java
@@ -126,7 +134,10 @@ bookstore-management-system/
             ├── application.properties
             ├── static/
             │   ├── css/style.css
-            │   └── js/main.js
+            │   ├── js/main.js
+            │   ├── favicon.ico
+            │   ├── favicon.svg
+            │   └── apple-touch-icon.png
             └── templates/
                 ├── admin/
                 │   ├── book-form.html
@@ -144,8 +155,7 @@ bookstore-management-system/
                 ├── login.html
                 ├── order-detail.html
                 ├── orders.html
-                ├── profile.html
-                └── register.html
+                └── profile.html
 ```
 
 ---
@@ -237,38 +247,13 @@ bookstore-management-system/
 ### Prerequisites
 
 - **Java 21** (JDK) — [Download](https://www.oracle.com/java/technologies/downloads/)
-- **MySQL 8.0+** — [Download](https://dev.mysql.com/downloads/installer/)
 - **Maven 3.8+** — Included with IntelliJ IDEA or [Download](https://maven.apache.org/download.cgi)
 
-### Step-by-Step Setup
+That's it — no database to install. LeafLore runs on an in-memory H2 database, so it's fully self-contained.
 
-#### 1. Install MySQL
+### Step-by-Step Setup (local development)
 
-- Download and run the MySQL Installer
-- During setup, select **MySQL Server** and note the **root password** you set
-- MySQL will run as a background service automatically
-
-#### 2. Verify MySQL is Running
-
-Open **Command Prompt** and run:
-
-```bash
-mysql -u root -p
-```
-
-Enter your root password. If you see the `mysql>` prompt, it's working. Type `exit` to quit.
-
-> **Note:** If `mysql` is not recognized, add `C:\Program Files\MySQL\MySQL Server 8.0\bin` to your system PATH.
-
-#### 3. Configure Database Credentials
-
-Open `src/main/resources/application.properties` and change the password:
-
-```properties
-spring.datasource.password=your_mysql_password
-```
-
-#### 4. Build and Run
+#### 1. Build and Run
 
 Open a terminal in the project directory and run:
 
@@ -281,18 +266,71 @@ Wait until you see:
 Started BookstoreApplication in X seconds
 ```
 
-#### 5. Open the Application
+#### 2. Open the Application
 
 Go to **http://localhost:8080** in your browser.
 
-> The database `bookstore_db`, all tables, and sample data are created **automatically** on first run.
+> All tables and sample data are created **automatically** on every startup, in memory. Restarting the app (locally or in production) wipes it and reseeds it fresh — there's nothing to install, migrate, or clean up.
 
-### Default Accounts
+#### Optional: inspect the database directly
 
-| Role     | Email               | Password      |
-|----------|---------------------|---------------|
-| Admin    | admin@bookstore.com | admin123      |
-| Customer | john@example.com    | password123   |
+Set `H2_CONSOLE=true` before running (`export H2_CONSOLE=true`, then `mvn spring-boot:run`) and open **http://localhost:8080/h2-console** in your browser. Use JDBC URL `jdbc:h2:mem:bookstore_db`, username `sa`, and an empty password. Leave this off (the default) for any public deployment.
+
+### Demo Accounts
+
+There's no registration form — the login page itself lists these two accounts with a **"Use this"** button that autofills the login form for you. Both are shared: anyone can log in with them at any time, no locking or exclusivity.
+
+| Role     | Email                  | Password     |
+|----------|-------------------------|--------------|
+| Admin    | admin@leaflore.com      | admin123     |
+| Customer | student@leaflore.com    | student123   |
+
+These are reseeded on every restart, local or deployed — they exist to make the demo instantly explorable, not to protect anything sensitive, since nothing here persists anyway.
+
+---
+
+## Deployment (Render)
+
+This is a server-rendered Spring Boot application, so it needs a host that runs a long-lived JVM process — **it cannot be deployed to Vercel**, which only supports static sites and short-lived serverless functions (Node/Python/Go/Ruby). Render (or any Docker-friendly host such as Railway or Fly.io) is the right fit. This project is live on Render at **[https://leaflore.onrender.com/](https://leaflore.onrender.com/)**.
+
+The repo includes everything Render needs, and — since the database is in-memory — there's no separate database service to provision at all:
+
+- **`Dockerfile`** — multi-stage build (Maven build stage → lightweight JRE runtime image)
+- **`render.yaml`** — a Render "Blueprint" that provisions just the web service, with the right environment variables already set
+
+### Option A — One-click Blueprint deploy
+
+1. Push this repo to GitHub (see below).
+2. In the [Render Dashboard](https://dashboard.render.com), choose **New → Blueprint**, and point it at your repo. Render will read `render.yaml` and create the web service with `DDL_AUTO=create` and `THYMELEAF_CACHE=true` already set.
+3. Click **Apply**. First deploy takes a few minutes while the Docker image builds.
+4. Once live, your app is reachable at the `.onrender.com` URL Render assigns (rename the service in Render's settings if you want a specific subdomain).
+
+### Option B — Manual setup
+
+1. In Render, create a **Web Service**, connect your GitHub repo, and set the environment to **Docker** (it will pick up the `Dockerfile` automatically).
+2. Add these environment variables:
+
+   | Key | Value |
+   |-----|-------|
+   | `DDL_AUTO` | `create` |
+   | `THYMELEAF_CACHE` | `true` |
+   | `H2_CONSOLE` | `false` |
+
+3. Deploy. Render sets `PORT` for you automatically — the app already reads it via `server.port=${PORT:8080}`.
+
+### Why it resets itself
+
+Render's free web services spin down after ~15 minutes of no traffic and spin back up as a fresh container on the next visit — a full process restart. Because `DDL_AUTO=create` recreates the schema from scratch on every startup, and `DataInitializer` reseeds the demo accounts and book catalog whenever it finds empty tables, every "wake up" gives visitors a clean, working demo with zero maintenance from you and no risk of strangers' data piling up.
+
+### Pushing this repo to GitHub
+
+```bash
+git add -A
+git commit -m "Portfolio-ready: shared demo accounts, H2 reset-on-restart, UI refresh, Render deploy config"
+git push origin main
+```
+
+Then connect that GitHub repo from Render as described above.
 
 ---
 
@@ -304,9 +342,7 @@ Go to **http://localhost:8080** in your browser.
 | GET    | `/`              | Home page                |
 | GET    | `/books`         | Browse books (with search)|
 | GET    | `/books/{id}`    | Book details             |
-| GET    | `/login`         | Login page               |
-| GET    | `/register`      | Registration page        |
-| POST   | `/register`      | Register new user        |
+| GET    | `/login`         | Login page (lists demo accounts) |
 
 ### Authenticated (Customer)
 | Method | URL                      | Description          |
@@ -338,11 +374,17 @@ Go to **http://localhost:8080** in your browser.
 
 ---
 
+## Notable Design Choices
+
+- **Shared demo accounts, not self-registration.** As a public portfolio demo, open sign-up invites throwaway accounts and clutter. Two fixed accounts (admin + customer), listed and autofillable right on the login page, keep the experience simple for anyone trying it out.
+- **In-memory H2 database.** The schema is rebuilt and reseeded from scratch on every application restart. Combined with Render's free-tier sleep/wake cycle, the live demo effectively resets itself with zero maintenance — nothing a visitor does ever persists beyond the current run.
+- **Custom UI, not stock Bootstrap.** The frontend layers a warm, book-themed design system (Playfair Display + Inter typography, a forest-green/gold palette) on top of Bootstrap 5 via CSS variable overrides, so every page — including the admin panel — picks up the theme automatically.
+
 ## Optional Features
 
-- **Auto-seeded data** — Admin, sample customer, and 10 books inserted on first run
+- **Auto-seeded data** — Admin, customer, and 10 books inserted fresh on every startup
 - **Order status management** — Full lifecycle: PENDING → CONFIRMED → SHIPPED → DELIVERED → CANCELLED
 - **Stock management** — Auto-decremented on order; insufficient stock prevents ordering
-- **Responsive UI** — Bootstrap 5.3 with auto-dismiss alerts, breadcrumbs, and loading spinners
+- **Responsive UI** — Custom Bootstrap 5.3 theme with auto-dismiss alerts, breadcrumbs, and loading spinners
 - **Global exception handling** — `@ControllerAdvice` for validations, not-found, and generic errors
 - **Payment transaction IDs** — Unique simulated IDs (e.g., `TXN8A3F9C2E1B0D`)
