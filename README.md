@@ -71,17 +71,17 @@ A full-stack bookstore management application built with **Spring Boot**, **H2 (
 
 ```
 bookstore-management-system/
-├── Dockerfile                                  # Multi-stage build for deployment
-├── render.yaml                                 # Render Blueprint (web service config)
+├── Dockerfile                                          # Multi-stage build for deployment
+├── render.yaml                                         # Render Blueprint (web service config)
 ├── .gitignore
 ├── pom.xml
 └── src/
     └── main/
         ├── java/
         │   └── com/bookstore/
-        │       ├── BookstoreApplication.java          # Entry point
+        │       ├── BookstoreApplication.java           # Entry point
         │       ├── config/
-        │       │   ├── DataInitializer.java           # Seeds demo accounts & sample data
+        │       │   ├── DataInitializer.java            # Seeds demo accounts & sample data
         │       │   ├── DemoAccounts.java               # The fixed admin/student roster
         │       │   └── SecurityConfig.java             # Spring Security config
         │       ├── controller/
@@ -91,7 +91,7 @@ bookstore-management-system/
         │       │   ├── CartController.java             # Cart operations
         │       │   ├── CheckoutController.java         # Checkout & payment flow
         │       │   ├── HomeController.java             # Home page
-        │       │   ├── OrderController.java             # Order history & detail
+        │       │   ├── OrderController.java            # Order history & detail
         │       │   └── ProfileController.java          # User profile
         │       ├── dto/
         │       │   ├── BookDto.java
@@ -103,11 +103,11 @@ bookstore-management-system/
         │       │   ├── CartItem.java
         │       │   ├── Order.java
         │       │   ├── OrderItem.java
-        │       │   ├── OrderStatus.java               # Enum
+        │       │   ├── OrderStatus.java                # Enum
         │       │   ├── Payment.java
-        │       │   ├── PaymentMethod.java             # Enum
-        │       │   ├── PaymentStatus.java             # Enum
-        │       │   ├── Role.java                      # Enum
+        │       │   ├── PaymentMethod.java              # Enum
+        │       │   ├── PaymentStatus.java              # Enum
+        │       │   ├── Role.java                       # Enum
         │       │   └── User.java
         │       ├── exception/
         │       │   ├── BadRequestException.java
@@ -288,51 +288,6 @@ These are reseeded on every restart, local or deployed — they exist to make th
 
 ---
 
-## Deployment (Render)
-
-This is a server-rendered Spring Boot application, so it needs a host that runs a long-lived JVM process — **it cannot be deployed to Vercel**, which only supports static sites and short-lived serverless functions (Node/Python/Go/Ruby). Render (or any Docker-friendly host such as Railway or Fly.io) is the right fit. This project is live on Render at **[https://leaf-lore.onrender.com/](https://leaf-lore.onrender.com/)**.
-
-The repo includes everything Render needs, and — since the database is in-memory — there's no separate database service to provision at all:
-
-- **`Dockerfile`** — multi-stage build (Maven build stage → lightweight JRE runtime image)
-- **`render.yaml`** — a Render "Blueprint" that provisions just the web service, with the right environment variables already set
-
-### Option A — One-click Blueprint deploy
-
-1. Push this repo to GitHub (see below).
-2. In the [Render Dashboard](https://dashboard.render.com), choose **New → Blueprint**, and point it at your repo. Render will read `render.yaml` and create the web service with `DDL_AUTO=create` and `THYMELEAF_CACHE=true` already set.
-3. Click **Apply**. First deploy takes a few minutes while the Docker image builds.
-4. Once live, your app is reachable at the `.onrender.com` URL Render assigns (rename the service in Render's settings if you want a specific subdomain).
-
-### Option B — Manual setup
-
-1. In Render, create a **Web Service**, connect your GitHub repo, and set the environment to **Docker** (it will pick up the `Dockerfile` automatically).
-2. Add these environment variables:
-
-   | Key | Value |
-   |-----|-------|
-   | `DDL_AUTO` | `create` |
-   | `THYMELEAF_CACHE` | `true` |
-   | `H2_CONSOLE` | `false` |
-
-3. Deploy. Render sets `PORT` for you automatically — the app already reads it via `server.port=${PORT:8080}`.
-
-### Why it resets itself
-
-Render's free web services spin down after ~15 minutes of no traffic and spin back up as a fresh container on the next visit — a full process restart. Because `DDL_AUTO=create` recreates the schema from scratch on every startup, and `DataInitializer` reseeds the demo accounts and book catalog whenever it finds empty tables, every "wake up" gives visitors a clean, working demo with zero maintenance from you and no risk of strangers' data piling up.
-
-### Pushing this repo to GitHub
-
-```bash
-git add -A
-git commit -m "Portfolio-ready: shared demo accounts, H2 reset-on-restart, UI refresh, Render deploy config"
-git push origin main
-```
-
-Then connect that GitHub repo from Render as described above.
-
----
-
 ## API Endpoints
 
 ### Public
@@ -387,3 +342,18 @@ Then connect that GitHub repo from Render as described above.
 - **Responsive UI** — Custom Bootstrap 5.3 theme with auto-dismiss alerts, breadcrumbs, and loading spinners
 - **Global exception handling** — `@ControllerAdvice` for validations, not-found, and generic errors
 - **Payment transaction IDs** — Unique simulated IDs (e.g., `TXN8A3F9C2E1B0D`)
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+  <p>Built by <strong>Bhavini Awasthi</strong></p>
+  <p>
+    <a href="https://www.linkedin.com/in/bhaviniawasthi/">LinkedIn</a>
+  </p>
+</div>
